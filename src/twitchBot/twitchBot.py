@@ -1,9 +1,9 @@
-from channelHandler import channelHandler
+from twitchBot.channelHandler import channelHandler
 from twitchAPI.twitch import Twitch
 from twitchAPI.oauth import UserAuthenticator
 from twitchAPI.types import AuthScope
 from twitchAPI.webhook import TwitchWebHook
-from userAuth import authenticate
+from twitchBot.userAuth import authenticate
 from threading import Thread
 from random import randint
 import socket

@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="twitchBot",
-    version="0.0.1",
+    version="0.0.4",
     author="retrontology",
     author_email="retrontology@hotmail.com",
     description="A Twitch IRC bot integrating twitchAPI and irc",

@@ -1,4 +1,4 @@
-from message import message
+from twitchBot.message import message
 import datetime
 import logging
 
