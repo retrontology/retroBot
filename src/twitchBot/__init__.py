@@ -1,1 +1,1 @@
-from twitchBot import message, channelHandler, userAuth, twitchBot
+from twitchBot import message, channelHandler, userAuth, bot
