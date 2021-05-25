@@ -21,7 +21,7 @@ class twitchBot(irc.bot.SingleServerIRCBot):
 
     def __init__(self, username, client_id, client_secret, channels, handler=channelHandler, webhook_host='', webhook_port=0, ssl_cert='fullchain.pem', ssl_key='privkey.pem'):
         self.username = username
-        self.logger = self.setup_logger(f"twitchBot.{username}")
+        self.logger = logging.getLogger(f"twitchBot.{username}")
         self.client_id = client_id
         self.client_secret = client_secret
         self.setup_twitch()
@@ -35,26 +35,6 @@ class twitchBot(irc.bot.SingleServerIRCBot):
         for channel in channels:
             self.channel_handlers[channel.lower()] = handler(channel.lower(), self)
         irc.bot.SingleServerIRCBot.__init__(self, [(self.irc_server, self.irc_port, 'oauth:'+self.token)], self.username, self.username)
-
-    def setup_logger(self, logname, logpath=""):
-        if not logpath or logpath == "":
-            logpath = os.path.join(os.path.dirname(__file__), 'logs')
-        else:
-            logpath = os.path.abspath(logpath)
-        if not os.path.exists(logpath):
-            os.mkdir(logpath)
-        logger = logging.getLogger(logname)
-        logger.setLevel(logging.DEBUG)
-        file_handler = logging.handlers.TimedRotatingFileHandler(os.path.join(logpath, f'{logname}.log'), when='midnight')
-        stream_handler = logging.StreamHandler()
-        form = logging.Formatter('%(asctime)s [%(levelname)s] %(name)s: %(message)s')
-        file_handler.setFormatter(form)
-        stream_handler.setFormatter(form)
-        file_handler.setLevel(logging.INFO)
-        stream_handler.setLevel(logging.INFO)
-        logger.addHandler(file_handler)
-        logger.addHandler(stream_handler)
-        return logger
     
     def setup_webhook(self, host, port, client_id, cert, key, twitch):
         if port == 0:
