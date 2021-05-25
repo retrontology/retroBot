@@ -1,4 +1,5 @@
 import datetime
+import pytz
 
 class message():
 
@@ -13,7 +14,7 @@ class message():
             elif tag['key'] == 'user-id':
                 self.user_id = int(tag['value'])
             elif tag['key'] == 'tmi-sent-ts':
-                self.time = datetime.datetime.fromtimestamp(float(tag['value'])/1000)
+                self.time = pytz.utc.localize(datetime.datetime.fromtimestamp(float(tag['value'])/1000))
             elif tag['key'] == 'badge-info':
                 self.parse_sub_length(tag['value'])
             elif tag['key'] == 'badges':
