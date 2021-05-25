@@ -16,7 +16,7 @@ class message():
             elif tag['key'] == 'tmi-sent-ts':
                 self.time = pytz.utc.localize(datetime.datetime.fromtimestamp(float(tag['value'])/1000))
             elif tag['key'] == 'badge-info':
-                self.parse_sub_length(tag['value'])
+                self.sub_length = self.parse_sub_length(tag['value'])
             elif tag['key'] == 'badges':
                 self.badges = self.parse_badges(tag['value'])
                 self.broadcaster = 'broadcaster/1' in self.badges
