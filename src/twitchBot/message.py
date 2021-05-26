@@ -8,6 +8,7 @@ class message():
    
     def parse_msg_event(self, event):
         self.content = event.arguments[0]
+        self.client_nonce = None
         for tag in event.tags:
             if tag['key'] == 'display-name':
                 self.username = tag['value']
