@@ -26,9 +26,9 @@ class message():
             elif tag['key'] == 'color':
                 self.color = tag['value']
             elif tag['key'] == 'emotes':
-                self.emotes = self.parse_emotes(tag['value'])
+                self.emotes = tag['value']
             elif tag['key'] == 'flags':
-                self.flags = self.parse_flags(tag['value'])
+                self.flags = tag['value']
             elif tag['key'] == 'id':
                 self.id = tag['value']
             elif tag['key'] == 'mod':
@@ -78,7 +78,7 @@ class message():
     def parse_sub_length(value):
         sub_length = None
         if value != None:
-            sub_length = value.split('/')[1]
+            sub_length = int(value.split('/')[1])
         return sub_length
 
     def __str__(self):
