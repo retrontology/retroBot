@@ -6,9 +6,11 @@ from twitchAPI.webhook import TwitchWebHook
 from twitchBot.userAuth import authenticate
 from threading import Thread
 from random import randint
+from time import sleep
+import itertools
+import more_itertools
 import socket
 import webbrowser
-import datetime
 import ssl
 import irc.bot
 import logging
@@ -75,7 +77,17 @@ class twitchBot(irc.bot.SingleServerIRCBot):
         self.twitch.user_auth_refresh_callback = self.oauth_user_refresh
         self.twitch.authenticate_app([])
         self.get_oauth_token()
+        self.auth_thread = Thread(target=self.authentication_loop, args=(), daemon=True)
+        self.auth_thread.start()
         self.logger.info(f'Twitch API client set up!')
+    
+    def authentication_loop(self):
+        while True:
+            sleep(24*60**2)
+            try:
+                self.twitch.refresh_used_token()
+            except Exception as e:
+                self.logger.error(e)
 
     def authenticate_twitch(self, target_scope):
         try:
@@ -130,6 +142,9 @@ class twitchBot(irc.bot.SingleServerIRCBot):
         self.logger.debug(f'Refreshing OAuth Token')
         self.token = token
         self.refresh_token = refresh_token
-        irc.bot.SingleServerIRCBot.__init__(self, [(self.irc_server, self.irc_port, 'oauth:'+self.token)], self.username, self.username)
-        self._connect()
         self.save_oauth_token()
+        self.disconnect()
+        specs = map(irc.bot.ServerSpec.ensure, [(self.irc_server, self.irc_port, 'oauth:'+self.token)])
+        self.servers = more_itertools.peekable(itertools.cycle(specs))
+        self._connect()
+        self.logger.debug(f'Oauth Token is refreshed!')
