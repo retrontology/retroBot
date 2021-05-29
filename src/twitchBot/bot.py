@@ -35,7 +35,10 @@ class twitchBot(irc.bot.SingleServerIRCBot):
         self.irc_port = 6667
         self.channel_handlers = {}
         for channel in channels:
-            self.channel_handlers[channel.lower()] = handler(channel.lower(), self)
+            try:
+                self.channel_handlers[channel.lower()] = handler(channel.lower(), self)
+            except Exception as e:
+                self.logger.error(e)
         irc.bot.SingleServerIRCBot.__init__(self, [(self.irc_server, self.irc_port, 'oauth:'+self.token)], self.username, self.username)
     
     def setup_webhook(self, host, port, client_id, cert, key, twitch):
