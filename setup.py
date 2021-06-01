@@ -4,16 +4,16 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="twitchBot",
-    version="0.1.0",
+    name="retroBot",
+    version="0.1.1",
     author="retrontology",
     author_email="retrontology@hotmail.com",
     description="A Twitch IRC bot integrating twitchAPI and irc",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/retrontology/twitchBot",
+    url="https://github.com/retrontology/retroBot",
     project_urls={
-        "Bug Tracker": "https://github.com/retrontology/twitchBot/issues",
+        "Bug Tracker": "https://github.com/retrontology/retroBot/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -1,1 +1,0 @@
-from twitchBot import message, channelHandler, userAuth, bot
