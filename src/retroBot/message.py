@@ -34,6 +34,8 @@ class message():
                 self.badges = self.parse_badges(tag['value'])
                 if self.badges != None:
                     self.broadcaster = 'broadcaster/1' in self.badges
+                else:
+                    self.broadcaster = None
             elif tag['key'] == 'client-nonce':
                 self.client_nonce = tag['value']
             elif tag['key'] == 'color':
