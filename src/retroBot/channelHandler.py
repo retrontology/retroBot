@@ -9,7 +9,6 @@ class channelHandler():
         self.logger.info(f'Initializing Channel Handler for {channel}')
         self.channel = channel
         self.parent = parent
-        self.user_id = self.parent.twitch.get_users(logins=[channel.lower()])['data'][0]['id']
         self.logger.info('Channel handler set up!')
     
     def on_pubmsg(self, c, e):
@@ -25,3 +24,6 @@ class channelHandler():
     
     def handle_commands(self, msg):
         cmd = msg.content.split(' ')[0][1:].lower()
+    
+    def get_user_id(self):
+        return self.parent.twitch.get_users(logins=[self.channel.lower()])['data'][0]['id']
