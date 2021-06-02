@@ -61,8 +61,11 @@ class retroBot(irc.bot.SingleServerIRCBot):
         c.cap('REQ', ':twitch.tv/tags')
         c.cap('REQ', ':twitch.tv/commands')
         if self.channel_handlers:
-            for channel in self.channel_handlers:
-                c.join('#' + channel.lower())
+            Thread(target=self.join_channels, daemon=True).start()
+
+    def join_channels(self):
+        for channel in self.channel_handlers:
+            self.connection.join('#' + channel.lower())
 
     def on_join(self, c, e):
         self.logger.debug(f'Joined {e.target}!')

@@ -1,0 +1,3 @@
+[submodule "examples/twitchlogger"]
+	path = examples/twitchlogger
+	url = https://github.com/retrontology/twitchlogger
