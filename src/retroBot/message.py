@@ -32,7 +32,8 @@ class message():
                     self.prediction = None
             elif tag['key'] == 'badges':
                 self.badges = self.parse_badges(tag['value'])
-                self.broadcaster = 'broadcaster/1' in self.badges
+                if self.badges != None:
+                    self.broadcaster = 'broadcaster/1' in self.badges
             elif tag['key'] == 'client-nonce':
                 self.client_nonce = tag['value']
             elif tag['key'] == 'color':
