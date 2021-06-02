@@ -5,7 +5,7 @@ import logging
 class channelHandler():
 
     def __init__(self, channel, parent):
-        self.logger = logging.getLogger(f'twitchBot.{parent.username}.{channel}')
+        self.logger = logging.getLogger(f'retroBot.{parent.username}.{channel}')
         self.logger.info(f'Initializing Channel Handler for {channel}')
         self.channel = channel
         self.parent = parent
