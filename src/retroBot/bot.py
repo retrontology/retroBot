@@ -27,7 +27,6 @@ class retroBot(irc.bot.SingleServerIRCBot):
             self.webhook = None
         self.irc_server = 'irc.chat.twitch.tv'
         self.irc_port = 6667
-        self.channels = channels
         self.channel_handlers = None
         if handler:
             for channel in channels:
@@ -61,8 +60,9 @@ class retroBot(irc.bot.SingleServerIRCBot):
         c.cap('REQ', ':twitch.tv/membership')
         c.cap('REQ', ':twitch.tv/tags')
         c.cap('REQ', ':twitch.tv/commands')
-        for channel in self.channels:
-            c.join('#' + channel.lower())
+        if self.channel_handlers:
+            for channel in self.channel_handlers:
+                c.join('#' + channel.lower())
 
     def on_join(self, c, e):
         self.logger.debug(f'Joined {e.target}!')
