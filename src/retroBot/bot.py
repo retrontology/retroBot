@@ -29,9 +29,9 @@ class retroBot(irc.bot.SingleServerIRCBot):
         self.irc_port = 6667
         self.channel_handlers = None
         if handler:
+            self.channel_handlers = {}
             for channel in channels:
                 try:
-                    self.channel_handlers = {}
                     self.channel_handlers[channel.lower()] = handler(channel.lower(), self)
                 except Exception as e:
                     self.logger.error(e)
