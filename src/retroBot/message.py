@@ -18,13 +18,17 @@ class message():
                 self.time = pytz.utc.localize(datetime.datetime.fromtimestamp(float(tag['value'])/1000))
             elif tag['key'] == 'badge-info':
                 self.badge_info = self.parse_badge_info(tag['value'])
-                if 'subscriber' in self.badge_info.keys():
-                    self.sub_length = int(self.badge_info['subscriber'])
+                if self.badge_info != None:
+                    if 'subscriber' in self.badge_info.keys():
+                        self.sub_length = int(self.badge_info['subscriber'])
+                    else:
+                        self.sub_length = None
+                    if 'predictions' in self.badge_info.keys():
+                        self.prediction = self.badge_info['predictions']
+                    else:
+                        self.prediction = None
                 else:
                     self.sub_length = None
-                if 'predictions' in self.badge_info.keys():
-                    self.prediction = self.badge_info['predictions']
-                else:
                     self.prediction = None
             elif tag['key'] == 'badges':
                 self.badges = self.parse_badges(tag['value'])
