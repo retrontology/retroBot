@@ -17,7 +17,15 @@ class message():
             elif tag['key'] == 'tmi-sent-ts':
                 self.time = pytz.utc.localize(datetime.datetime.fromtimestamp(float(tag['value'])/1000))
             elif tag['key'] == 'badge-info':
-                self.sub_length = self.parse_sub_length(tag['value'])
+                self.badge_info = self.parse_badge_info(tag['value'])
+                if 'subscriber' in self.badge_info.keys():
+                    self.sub_length = int(self.badge_info['subscriber'])
+                else:
+                    self.sub_length = None
+                if 'predictions' in self.badge_info.keys():
+                    self.prediction = self.badge_info['predictions']
+                else:
+                    self.prediction = None
             elif tag['key'] == 'badges':
                 self.badges = self.parse_badges(tag['value'])
                 self.broadcaster = 'broadcaster/1' in self.badges
@@ -42,9 +50,10 @@ class message():
 
     @staticmethod
     def parse_badges(value):
-        badges = []
         if value != None:
             badges = value.split(',')
+        else:
+            badges = None
         return badges
     
     @staticmethod
@@ -75,11 +84,15 @@ class message():
         return out
     
     @staticmethod
-    def parse_sub_length(value):
-        sub_length = None
+    def parse_badge_info(value):
         if value != None:
-            sub_length = int(value.split('/')[1])
-        return sub_length
+            badge_info = {}
+            for info in value.split(','):
+                key, value = info.split('/', 1)
+                badge_info[key] = value
+            return badge_info
+        else:
+            return None
 
     def __str__(self):
         return str(self.__dict__)
