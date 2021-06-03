@@ -25,6 +25,10 @@ class retroBot(irc.bot.SingleServerIRCBot):
             self.webhook = self.setup_webhook(webhook_host, webhook_port, self.client_id, ssl_cert, ssl_key, self.twitch)
         else:
             self.webhook = None
+            self.webhook_host = None
+            self.webhook_port = None
+            self.webhook_ssl_cert = None
+            self.webhook_ssl_key = None
         self.irc_server = 'irc.chat.twitch.tv'
         self.irc_port = 6667
         self.channel_handlers = None
@@ -38,6 +42,7 @@ class retroBot(irc.bot.SingleServerIRCBot):
         irc.bot.SingleServerIRCBot.__init__(self, [(self.irc_server, self.irc_port, 'oauth:'+self.user_auth.token)], self.username, self.username)
     
     def setup_webhook(self, host, port, client_id, cert, key, twitch):
+        self.webhook_host = host
         if port == 0:
             while True:
                 p = randint(1025, 65535)
@@ -48,6 +53,9 @@ class retroBot(irc.bot.SingleServerIRCBot):
                     if is_open:
                         port = p
                         break
+        self.webhook_port = port
+        self.webhook_ssl_cert = cert
+        self.webhook_ssl_key = key
         ssl_context = ssl.create_default_context(purpose=ssl.Purpose.CLIENT_AUTH)
         ssl_context.load_cert_chain(certfile=cert, keyfile=key)
         hook = TwitchWebHook('https://' + host + ":" + str(port), client_id, port, ssl_context=ssl_context)
