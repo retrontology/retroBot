@@ -10,7 +10,6 @@ class channelHandler():
         self.channel = channel
         self.parent = parent
         self.webhook_uuid = None
-        self.live = False
         self.logger.info('Channel handler set up!')
     
     def on_pubmsg(self, c, e):
