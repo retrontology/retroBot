@@ -7,3 +7,5 @@
 [submodule "examples/atton"]
 	path = examples/atton
 	url = https://github.com/retrontology/Atton-Rand-Bot
+[submodule "extras/atton"]
+	branch = main
