@@ -1,11 +1,12 @@
 [submodule "examples/twitchlogger"]
 	path = examples/twitchlogger
 	url = https://github.com/retrontology/twitchlogger
+	branch = main
 [submodule "examples/TwitchMarkov"]
 	path = examples/TwitchMarkov
 	url = https://github.com/retrontology/TwitchMarkov
+	branch = main
 [submodule "examples/atton"]
 	path = examples/atton
 	url = https://github.com/retrontology/Atton-Rand-Bot
-[submodule "extras/atton"]
 	branch = main
