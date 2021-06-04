@@ -4,3 +4,6 @@
 [submodule "examples/TwitchMarkov"]
 	path = examples/TwitchMarkov
 	url = https://github.com/retrontology/TwitchMarkov
+[submodule "examples/atton"]
+	path = examples/atton
+	url = https://github.com/retrontology/Atton-Rand-Bot
