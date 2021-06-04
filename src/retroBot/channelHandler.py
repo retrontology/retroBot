@@ -41,7 +41,9 @@ class channelHandler():
             self.live = False
         return self.live
 
-    def webhook_stream_changed_subscribe(self, callback):
+    def webhook_stream_changed_subscribe(self, callback=None):
+        if callback == None:
+            callback = self.callback_stream_changed
         success, uuid = self.parent.webhook.subscribe_stream_changed(self.user_id, callback)
         if success:
             self.webhook_uuid = uuid
