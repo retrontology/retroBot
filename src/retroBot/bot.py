@@ -10,6 +10,7 @@ import ssl
 import irc.bot
 import logging
 import logging.handlers
+from time import sleep
 
 
 class retroBot(irc.bot.SingleServerIRCBot):
@@ -37,12 +38,14 @@ class retroBot(irc.bot.SingleServerIRCBot):
         c.cap('REQ', ':twitch.tv/membership')
         c.cap('REQ', ':twitch.tv/tags')
         c.cap('REQ', ':twitch.tv/commands')
+        sleep(1)
         if self.channel_handlers:
             Thread(target=self.join_channels, daemon=True).start()
 
     def join_channels(self):
         for channel in self.channel_handlers:
             self.connection.join('#' + channel.lower())
+            sleep(0.1)
 
     def on_join(self, c, e):
         self.logger.debug(f'Joined {e.target}!')
