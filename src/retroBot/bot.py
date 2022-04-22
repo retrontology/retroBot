@@ -5,11 +5,10 @@ from threading import Thread
 from random import randint
 import itertools
 import more_itertools
-import socket
-import ssl
 import irc.bot
 import logging
 import logging.handlers
+from time import sleep
 
 
 class retroBot(irc.bot.SingleServerIRCBot):
@@ -19,6 +18,7 @@ class retroBot(irc.bot.SingleServerIRCBot):
         self.logger = logging.getLogger(f"retroBot.{username}")
         self.client_id = client_id
         self.client_secret = client_secret
+        self._joining = False
         self.setup_twitch()
         self.irc_server = 'irc.chat.twitch.tv'
         self.irc_port = 6667
@@ -37,12 +37,20 @@ class retroBot(irc.bot.SingleServerIRCBot):
         c.cap('REQ', ':twitch.tv/membership')
         c.cap('REQ', ':twitch.tv/tags')
         c.cap('REQ', ':twitch.tv/commands')
-        if self.channel_handlers:
+        if self.channel_handlers and not self._joining:
             Thread(target=self.join_channels, daemon=True).start()
 
     def join_channels(self):
+        self._joining = True
+        count = 0
         for channel in self.channel_handlers:
             self.connection.join('#' + channel.lower())
+            if count >= 19:
+                sleep(10.1)
+                count = 0
+            else:
+                count += 1
+        self._joining = False
 
     def on_join(self, c, e):
         self.logger.debug(f'Joined {e.target}!')
