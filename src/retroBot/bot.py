@@ -13,8 +13,9 @@ from time import sleep
 
 class retroBot(irc.bot.SingleServerIRCBot):
 
-    def __init__(self, username, client_id, client_secret, channels, handler=None):
+    def __init__(self, username, client_id, client_secret, channels, handler=None, multithread=False):
         self.username = username
+        self._multithread = multithread
         self.logger = logging.getLogger(f"retroBot.{username}")
         self.client_id = client_id
         self.client_secret = client_secret
@@ -58,7 +59,10 @@ class retroBot(irc.bot.SingleServerIRCBot):
     def on_pubmsg(self, c, e):
         self.logger.debug(f'Passing message to {e.target[1:]} handler')
         if self.channel_handlers:
-            Thread(target=self.channel_handlers[e.target[1:]].on_pubmsg, args=(c, e, )).start()
+            if self._multithread:
+                Thread(target=self.channel_handlers[e.target[1:]].on_pubmsg, args=(c, e, )).start()
+            else:
+                self.channel_handlers[e.target[1:]].on_pubmsg(c, e)
     
     def setup_twitch(self):
         self.logger.info(f'Setting up Twitch API client...')
