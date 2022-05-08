@@ -1,5 +1,6 @@
 import requests
 from logging import getLogger
+import re
 
 RETRY_LIMIT = 5
 
@@ -37,8 +38,25 @@ class emoteParser():
     def update_channel(self):
         pass
 
-    def parse_emotes(self):
-        pass
+    def parse_emotes(self, message):
+        emote_strings = []
+        for emote in self.global_emotes + self.channel_emotes:
+            regexp = emote['regex']
+            matches = [match for match in regexp.finditer(message)]
+            if len(matches) > 0:
+                emote_string = f'{emote["id"]}:'
+                occurances = []
+                for match in matches:
+                    occurances.append(f'{match.start()}-{match.end()}')
+                emote_string += ','.join(occurances)
+                emote_strings.append(emote_strings)
+        if emote_strings:
+            return '/'.join(emote_strings)
+        else:
+            return None
+                
+
+
 
 class ffzEmoteParser(emoteParser):
 
@@ -48,7 +66,11 @@ class ffzEmoteParser(emoteParser):
 
     @staticmethod
     def ffz_map(emote):
-        return {'id': emote['id'], 'text': emote['name']}
+        return {
+            'id': emote['id'], 
+            'text': emote['name'],
+            'regex': re.compile(f'\\b{emote["name"]}\\b')
+        }
     
     @classmethod
     def update_globals(cls):
@@ -80,7 +102,11 @@ class bttvEmoteParser(emoteParser):
 
     @staticmethod
     def bttv_map(emote):
-        return {'id': emote['id'], 'text': emote['code']}
+        return {
+            'id': emote['id'], 
+            'text': emote['code'],
+            'regex': re.compile(f'\\b{emote["code"]}\\b')
+            }
 
     @classmethod
     def update_globals(cls):
@@ -106,7 +132,11 @@ class seventvEmoteParser(emoteParser):
 
     @staticmethod
     def seventv_map(emote):
-        return {'id': emote['id'], 'text': emote['name']}
+        return {
+            'id': emote['id'], 
+            'text': emote['name'],
+            'regex': re.compile(f'\\b{emote["name"]}\\b')
+            }
 
     @classmethod
     def update_globals(cls):
