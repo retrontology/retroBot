@@ -13,7 +13,7 @@ from time import sleep
 
 class retroBot(irc.bot.SingleServerIRCBot):
 
-    def __init__(self, username, client_id, client_secret, channels, handler=None, multithread=False):
+    def __init__(self, username, client_id, client_secret, channels, handler=None, multithread=False, ffz=False, bttv=False, seventv=False ):
         self.username = username
         self._multithread = multithread
         self.logger = logging.getLogger(f"retroBot.{username}")
