@@ -1,7 +1,7 @@
 from retroBot.message import message
 from threading import Thread
 import logging
-from emotes import ffzEmoteParser, bttvEmoteParser, seventvEmoteParser
+from retroBot.emotes import ffzEmoteParser, bttvEmoteParser, seventvEmoteParser
 
 class channelHandler():
 
