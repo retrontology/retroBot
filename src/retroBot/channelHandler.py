@@ -1,16 +1,31 @@
 from retroBot.message import message
 from threading import Thread
 import logging
+from emotes import ffzEmoteParser, bttvEmoteParser, seventvEmoteParser
 
 class channelHandler():
 
-    def __init__(self, channel, parent):
+    def __init__(self, channel, parent, ffz=False, bttv=False, seventv=False):
         self.logger = logging.getLogger(f'retroBot.{parent.username}.{channel}')
         self.logger.info(f'Initializing Channel Handler for {channel}')
         self.channel = channel
+        self.channel_id = self.get_channel_id()
         self.parent = parent
+        self.init_emote_parsers(ffz, bttv, seventv)
         self.webhook_uuid = None
         self.logger.info('Channel handler set up!')
+    
+    def init_emote_parsers(self, ffz=False, bttv=False, seventv=False):
+        self.emote_parsers = {}
+        if ffz:
+            self.emote_parsers['ffz'] = ffzEmoteParser(self.channel_id)
+        if bttv:
+            self.emote_parsers['bttv'] = bttvEmoteParser(self.channel_id)
+        if seventv:
+            self.emote_parsers['seventv'] = seventvEmoteParser(self.channel)
+    
+    def get_channel_id(self):
+        return self.parent.twitch.get_users(login=self.channel)['data'][0]['id']
     
     def on_pubmsg(self, c, e):
         msg = message(e)

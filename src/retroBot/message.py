@@ -3,10 +3,10 @@ import pytz
 
 class message():
 
-    def __init__(self, event):
-        self.parse_msg_event(event)
+    def __init__(self, event, emote_parsers={}):
+        self.parse_msg_event(event, emote_parsers)
    
-    def parse_msg_event(self, event):
+    def parse_msg_event(self, event, emote_parsers={}):
         self.content = event.arguments[0]
         self.client_nonce = None
         for tag in event.tags:
@@ -54,6 +54,9 @@ class message():
                 self.sub = tag['value'] == '1'
             elif tag['key'] == 'turbo':
                 self.turbo = tag['value'] == '1'
+        for parser_type in emote_parsers:
+            parser = emote_parsers[parser_type]
+            self.__setattr__(f'emotes_{parser_type}', parser.parse_emotes(self.content))
 
     @staticmethod
     def parse_badges(value):
