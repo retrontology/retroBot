@@ -54,9 +54,12 @@ class message():
                 self.sub = tag['value'] == '1'
             elif tag['key'] == 'turbo':
                 self.turbo = tag['value'] == '1'
-        for parser_type in emote_parsers:
-            parser = emote_parsers[parser_type]
-            self.__setattr__(f'emotes_{parser_type}', parser.parse_emotes(self.content))
+        ffz_emotes = emote_parsers['ffz'].parse_emotes(self.content) if 'ffz' in emote_parsers else None
+        self.__setattr__(f'emotes_ffz', ffz_emotes)
+        bttv_emotes = emote_parsers['bttv'].parse_emotes(self.content) if 'bttv' in emote_parsers else None
+        self.__setattr__(f'emotes_bttv', bttv_emotes)
+        seventv_emotes = emote_parsers['seventv'].parse_emotes(self.content) if 'seventv' in emote_parsers else None
+        self.__setattr__(f'emotes_seventv', seventv_emotes)
 
     @staticmethod
     def parse_badges(value):
