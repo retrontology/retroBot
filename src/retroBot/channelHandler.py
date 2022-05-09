@@ -28,7 +28,7 @@ class channelHandler():
         return self.parent.twitch.get_users(logins=[self.channel])['data'][0]['id']
     
     def on_pubmsg(self, c, e):
-        msg = message(e)
+        msg = message(e, self.emote_parsers)
         if msg.content[:1] == '!':
             self.handle_commands(msg)
         else:
