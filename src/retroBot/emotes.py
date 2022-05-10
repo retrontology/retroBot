@@ -26,7 +26,7 @@ class emoteParser():
     def get_emotes(url):
         response = None
         tries = 0
-        while tries < (response is None or response.code not in (200,)):
+        while tries < (response is None or response.status_code not in (200,)):
             response = requests.get(url)
             tries += 1
         return response.json()
