@@ -78,7 +78,7 @@ class ffzEmoteParser(emoteParser):
         global_emotes = []
         if response:
             for emote_set in response['default_sets']:
-                emote_set = response['sets'][set]
+                emote_set = response['sets'][emote_set]
                 emotes = [map(cls.ffz_map, emote_set['emoticons'])]
                 global_emotes.extend(emotes)
         cls.global_emotes = global_emotes
