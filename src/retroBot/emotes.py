@@ -84,10 +84,9 @@ class ffzEmoteParser(emoteParser):
     def update_channel(self):
         response = self.get_emotes(self.get_channel_url())
         channel_emotes = []
-        if response:
-            if 'sets' in response:
-                emote_set = response['sets'][str(response['room']['set'])]
-                channel_emotes = [x for x in map(self.ffz_map, emote_set['emoticons'])]
+        if response and 'sets' in response:
+            emote_set = response['sets'][str(response['room']['set'])]
+            channel_emotes = [x for x in map(self.ffz_map, emote_set['emoticons'])]
         self.channel_emotes = channel_emotes
 
 
@@ -147,6 +146,6 @@ class seventvEmoteParser(emoteParser):
     def update_channel(self):
         response = self.get_emotes(self.get_channel_url())
         channel_emotes = []
-        if response:
+        if response and if not 'status' in response:
             channel_emotes = [x for x in map(self.seventv_map, response)]
         self.channel_emotes = channel_emotes
