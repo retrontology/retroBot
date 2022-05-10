@@ -49,7 +49,7 @@ class emoteParser():
                 for match in matches:
                     occurances.append(f'{match.start()}-{match.end()}')
                 emote_string += ','.join(occurances)
-                emote_strings.append(emote_strings)
+                emote_strings.append(emote_string)
         if emote_strings:
             return '/'.join(emote_strings)
         else:
