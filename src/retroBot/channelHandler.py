@@ -1,7 +1,7 @@
 from retroBot.message import message
 from threading import Thread
 import logging
-from emotes import ffzEmoteParser, bttvEmoteParser, seventvEmoteParser
+from retroBot.emotes import ffzEmoteParser, bttvEmoteParser, seventvEmoteParser
 
 class channelHandler():
 
@@ -25,10 +25,10 @@ class channelHandler():
             self.emote_parsers['seventv'] = seventvEmoteParser(self.channel)
     
     def get_channel_id(self):
-        return self.parent.twitch.get_users(login=self.channel)['data'][0]['id']
+        return self.parent.twitch.get_users(logins=[self.channel])['data'][0]['id']
     
     def on_pubmsg(self, c, e):
-        msg = message(e)
+        msg = message(e, self.emote_parsers)
         if msg.content[:1] == '!':
             self.handle_commands(msg)
         else:
