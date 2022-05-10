@@ -146,6 +146,6 @@ class seventvEmoteParser(emoteParser):
     def update_channel(self):
         response = self.get_emotes(self.get_channel_url())
         channel_emotes = []
-        if response and if not 'status' in response:
+        if response and not 'status' in response:
             channel_emotes = [x for x in map(self.seventv_map, response)]
         self.channel_emotes = channel_emotes
