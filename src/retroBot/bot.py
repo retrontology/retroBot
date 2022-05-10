@@ -30,6 +30,7 @@ class retroBot(irc.bot.SingleServerIRCBot):
                 try:
                     self.channel_handlers[channel.lower()] = handler(channel.lower(), self, ffz=ffz, bttv=bttv, seventv=seventv)
                 except Exception as e:
+                    self.logger.error('is this wehre it happens?')
                     self.logger.error(e)
         irc.bot.SingleServerIRCBot.__init__(self, [(self.irc_server, self.irc_port, 'oauth:'+self.user_auth.token)], self.username, self.username)
 
