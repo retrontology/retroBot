@@ -54,9 +54,7 @@ class emoteParser():
             return '/'.join(emote_strings)
         else:
             return None
-                
-
-
+            
 
 class ffzEmoteParser(emoteParser):
 
@@ -79,7 +77,7 @@ class ffzEmoteParser(emoteParser):
         if response:
             for emote_set in response['default_sets']:
                 emote_set = response['sets'][str(emote_set)]
-                emotes = [map(cls.ffz_map, emote_set['emoticons'])]
+                emotes = [x for x in map(cls.ffz_map, emote_set['emoticons'])]
                 global_emotes.extend(emotes)
         cls.global_emotes = global_emotes
 
@@ -89,7 +87,7 @@ class ffzEmoteParser(emoteParser):
         if response:
             if 'sets' in response:
                 emote_set = response['sets'][str(response['room']['set'])]
-                channel_emotes = [map(self.ffz_map, emote_set['emoticons'])]
+                channel_emotes = [x for x in map(self.ffz_map, emote_set['emoticons'])]
         self.channel_emotes = channel_emotes
 
 
@@ -113,14 +111,14 @@ class bttvEmoteParser(emoteParser):
         response = cls.get_emotes(cls.global_url)
         global_emotes = []
         if response:
-            global_emotes = [map(cls.bttv_map, response)]
+            global_emotes = [x for x in map(cls.bttv_map, response)]
         cls.global_emotes = global_emotes
 
     def update_channel(self):
         response = self.get_emotes(self.get_channel_url())
         channel_emotes = []
         if response:
-            channel_emotes = [map(self.bttv_map, response['channelEmotes'])]
+            channel_emotes = [x for x in map(self.bttv_map, response['channelEmotes'])]
             channel_emotes.extend(map(self.bttv_map, response['sharedEmotes']))
         self.channel_emotes = channel_emotes
 
@@ -143,12 +141,12 @@ class seventvEmoteParser(emoteParser):
         response = cls.get_emotes(cls.global_url)
         global_emotes = []
         if response:
-            global_emotes = [map(cls.seventv_map, response)]
+            global_emotes = [x for x in map(cls.seventv_map, response)]
         cls.global_emotes = global_emotes
 
     def update_channel(self):
         response = self.get_emotes(self.get_channel_url())
         channel_emotes = []
         if response:
-            channel_emotes = [map(self.seventv_map, response)]
+            channel_emotes = [x for x in map(self.seventv_map, response)]
         self.channel_emotes = channel_emotes
