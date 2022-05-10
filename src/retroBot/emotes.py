@@ -83,13 +83,13 @@ class ffzEmoteParser(emoteParser):
                 global_emotes.extend(emotes)
         cls.global_emotes = global_emotes
 
-
     def update_channel(self):
         response = self.get_emotes(self.get_channel_url())
         channel_emotes = []
         if response:
-            emote_set = response['sets'][str(response['room']['set'])]
-            channel_emotes = [map(self.ffz_map, emote_set['emoticons'])]
+            if 'sets' in response:
+                emote_set = response['sets'][str(response['room']['set'])]
+                channel_emotes = [map(self.ffz_map, emote_set['emoticons'])]
         self.channel_emotes = channel_emotes
 
 
