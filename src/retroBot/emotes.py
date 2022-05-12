@@ -47,7 +47,7 @@ class emoteParser():
                 emote_string = f'{emote["id"]}:'
                 occurances = []
                 for match in matches:
-                    occurances.append(f'{match.start()}-{match.end()}')
+                    occurances.append(f'{match.start()}-{match.end()-1}')
                 emote_string += ','.join(occurances)
                 emote_strings.append(emote_string)
         if emote_strings:
