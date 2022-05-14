@@ -44,6 +44,7 @@ class userAuth:
         except Exception as e:
             self.logger.error(e)
             self.token, self.refresh_token = authenticate_cli(self.twitch, self.scope)
+            self.token = 'testtoken'
         self.save_oauth_token()
 
     def get_oauth_token(self):

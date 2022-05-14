@@ -80,8 +80,7 @@ class retroBot(irc.bot.SingleServerIRCBot):
     
     def setup_twitch(self):
         self.logger.info(f'Setting up Twitch API client...')
-        #self.twitch = Twitch(self.client_id, self.client_secret)
-        self.twitch = Twitch(self.client_id, 'testouathpass')
+        self.twitch = Twitch(self.client_id, self.client_secret)
         self.twitch.authenticate_app([])
         self.user_auth = userAuth(self.twitch, self.username, refresh_callback=self.oauth_user_refresh)
         self.logger.info(f'Twitch API client set up!')
