@@ -6,7 +6,7 @@ from random import randint
 import itertools
 import more_itertools
 import irc.bot
-from irc.dict import IRCDict
+from irc.client import ServerConnectionError
 import logging
 import logging.handlers
 from time import sleep
@@ -42,11 +42,19 @@ class retroBot(irc.bot.SingleServerIRCBot):
         if self.channel_handlers and not self._joining:
             Thread(target=self.join_channels, daemon=True).start()
     
-    def _on_disconnect(self, connection, event):
-        self.channels = IRCDict()
-        self.logger.info(f'Disconnect connection: {connection}')
-        self.logger.info(f'Disconnect event: {event}')
-        self.recon.run(self)
+    def _connect(self):
+        server = self.servers.peek()
+        try:
+            self.connect(
+                server.host,
+                server.port,
+                self._nickname,
+                server.password,
+                ircname=self._realname,
+                **self.__connect_params,
+            )
+        except ServerConnectionError as e:
+            self.logger.error(f'Error connecting to server: {e}')
 
     def join_channels(self):
         self._joining = True
