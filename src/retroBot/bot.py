@@ -33,7 +33,7 @@ class retroBot(irc.bot.SingleServerIRCBot):
                 except Exception as e:
                     self.logger.error(e.with_traceback())
         #irc.bot.SingleServerIRCBot.__init__(self, [(self.irc_server, self.irc_port, 'oauth:'+self.user_auth.token)], self.username, self.username)
-        irc.bot.SingleServerIRCBot.__init__(self, [(self.irc_server, self.irc_port, 'oauth:testtoken')], self.username, self.username)
+        super().__init__([(self.irc_server, self.irc_port, 'oauth:testtoken')], self.username, self.username)
         self.connection.add_global_handler('privnotice', self._on_privnotice, -20)
 
     def on_welcome(self, c, e):
