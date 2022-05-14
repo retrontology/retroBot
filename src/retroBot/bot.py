@@ -50,8 +50,7 @@ class retroBot(irc.bot.SingleServerIRCBot):
                 server.port,
                 self._nickname,
                 server.password,
-                ircname=self._realname,
-                **self.__connect_params,
+                ircname=self._realname
             )
         except ServerConnectionError as e:
             self.logger.error(f'Error connecting to server: {e}')
