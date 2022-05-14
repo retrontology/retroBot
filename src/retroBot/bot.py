@@ -6,6 +6,7 @@ from random import randint
 import itertools
 import more_itertools
 import irc.bot
+from irc.dict import IRCDict
 import logging
 import logging.handlers
 from time import sleep
@@ -40,6 +41,12 @@ class retroBot(irc.bot.SingleServerIRCBot):
         c.cap('REQ', ':twitch.tv/commands')
         if self.channel_handlers and not self._joining:
             Thread(target=self.join_channels, daemon=True).start()
+    
+    def _on_disconnect(self, connection, event):
+        self.channels = IRCDict()
+        self.logger.info(f'Disconnect connection: {connection}')
+        self.logger.info(f'Disconnect event: {event}')
+        self.recon.run(self)
 
     def join_channels(self):
         self._joining = True
