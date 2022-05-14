@@ -31,7 +31,8 @@ class retroBot(irc.bot.SingleServerIRCBot):
                     self.channel_handlers[channel.lower()] = handler(channel.lower(), self, ffz=ffz, bttv=bttv, seventv=seventv)
                 except Exception as e:
                     self.logger.error(e.with_traceback())
-        irc.bot.SingleServerIRCBot.__init__(self, [(self.irc_server, self.irc_port, 'oauth:'+self.user_auth.token)], self.username, self.username)
+        super().__init__([(self.irc_server, self.irc_port, 'oauth:'+self.user_auth.token)], self.username, self.username)
+        self.connection.add_global_handler('privnotice', self._on_privnotice, -20)
 
     def on_welcome(self, c, e):
         self.logger.info('Joined Twitch IRC server!')
@@ -40,6 +41,12 @@ class retroBot(irc.bot.SingleServerIRCBot):
         c.cap('REQ', ':twitch.tv/commands')
         if self.channel_handlers and not self._joining:
             Thread(target=self.join_channels, daemon=True).start()
+    
+    def _on_privnotice(self, connection, event):
+        if len(event.arguments) == 1 and event.arguments[0] == 'Login authentication failed':
+            self.user_auth.oauth_user_refresh()
+        else:
+            self.logger.info(f'privnotice event: {event}')
 
     def join_channels(self):
         self._joining = True
