@@ -24,7 +24,6 @@ class retroBot(irc.bot.SingleServerIRCBot):
         self.setup_twitch()
         self.irc_server = 'irc.chat.twitch.tv'
         self.irc_port = 6667
-        self.connection.add_global_handler('privnotice', self._on_privnotice, -20)
         self.channel_handlers = None
         if handler:
             self.channel_handlers = {}
@@ -35,6 +34,7 @@ class retroBot(irc.bot.SingleServerIRCBot):
                     self.logger.error(e.with_traceback())
         #irc.bot.SingleServerIRCBot.__init__(self, [(self.irc_server, self.irc_port, 'oauth:'+self.user_auth.token)], self.username, self.username)
         irc.bot.SingleServerIRCBot.__init__(self, [(self.irc_server, self.irc_port, 'oauth:testtoken')], self.username, self.username)
+        self.connection.add_global_handler('privnotice', self._on_privnotice, -20)
 
     def on_welcome(self, c, e):
         self.logger.info('Joined Twitch IRC server!')
