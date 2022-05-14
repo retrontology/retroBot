@@ -80,7 +80,11 @@ class userAuth:
         if not os.path.exists(pickle_dir): os.makedirs(pickle_dir, exist_ok=True)
         return os.path.join(pickle_dir, f'{self.username}_oauth.pickle')
     
-    def oauth_user_refresh(self, token, refresh_token):
+    def oauth_user_refresh(self, token=None, refresh_token=None):
+        if token == None:
+            token = self.token
+        if refresh_token == None:
+            refresh_token = self.refresh_token
         self.logger.debug(f'Refreshing OAuth Token')
         self.token = token
         self.refresh_token = refresh_token
