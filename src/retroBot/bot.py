@@ -6,7 +6,6 @@ from random import randint
 import itertools
 import more_itertools
 import irc.bot
-from irc.client import ServerConnectionError
 import logging
 import logging.handlers
 from time import sleep
@@ -45,7 +44,7 @@ class retroBot(irc.bot.SingleServerIRCBot):
             Thread(target=self.join_channels, daemon=True).start()
     
     def _on_privnotice(self, connection, event):
-        if event['arguments'] == 1 and event['arguments'] == 'Login authentication failed':
+        if len(event.arguments) == 1 and event.arguments == 'Login authentication failed':
             self.user_auth.oauth_user_refresh()
         else:
             self.logger.info(f'privnotice event: {event}')
