@@ -44,7 +44,7 @@ class retroBot(irc.bot.SingleServerIRCBot):
             Thread(target=self.join_channels, daemon=True).start()
     
     def _on_privnotice(self, connection, event):
-        if len(event.arguments) == 1 and event.arguments == 'Login authentication failed':
+        if len(event.arguments) == 1 and event.arguments[0] == 'Login authentication failed':
             self.user_auth.oauth_user_refresh()
         else:
             self.logger.info(f'privnotice event: {event}')
