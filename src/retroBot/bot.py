@@ -24,6 +24,7 @@ class retroBot(irc.bot.SingleServerIRCBot):
         self.setup_twitch()
         self.irc_server = 'irc.chat.twitch.tv'
         self.irc_port = 6667
+        self.connection.add_global_handler('privnotice', self._on_privnotice, -20)
         self.channel_handlers = None
         if handler:
             self.channel_handlers = {}
@@ -43,18 +44,8 @@ class retroBot(irc.bot.SingleServerIRCBot):
         if self.channel_handlers and not self._joining:
             Thread(target=self.join_channels, daemon=True).start()
     
-    def _connect(self):
-        server = self.servers.peek()
-        try:
-            self.connect(
-                server.host,
-                server.port,
-                self._nickname,
-                server.password,
-                ircname=self._realname
-            )
-        except ServerConnectionError as e:
-            self.logger.error(f'Error connecting to server: {e}')
+    def _on_privnotice(self, connection, event):
+        self.logger.error(f'privnotice event: {event}')
 
     def join_channels(self):
         self._joining = True
