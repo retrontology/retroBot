@@ -1,5 +1,5 @@
 irc==19.0.1
 requests==2.25.1
 PyYAML==5.4.1
-twitchAPI==2.3.2
+twitchAPI==2.5.3
 appdirs==1.4.4

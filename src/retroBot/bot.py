@@ -1,5 +1,4 @@
-from retroBot.channelHandler import channelHandler
-from twitchAPI.twitch import Twitch
+from twitchAPI import Twitch, EventSub
 from retroBot.userAuth import userAuth
 from threading import Thread
 from random import randint
@@ -13,14 +12,28 @@ from time import sleep
 
 class retroBot(irc.bot.SingleServerIRCBot):
 
-    def __init__(self, username, client_id, client_secret, channels, handler=None, multithread=False, ffz=False, bttv=False, seventv=False ):
+    def __init__(
+        self, 
+        username, 
+        client_id, 
+        client_secret, 
+        channels=[],
+        handler=None, 
+        multithread=False, 
+        ffz=False, 
+        bttv=False, 
+        seventv=False,
+        eventsub=False,
+        callback_url=None,
+        port=None
+    ):
         self.username = username
         self._multithread = multithread
         self.logger = logging.getLogger(f"retroBot.{username}")
         self.client_id = client_id
         self.client_secret = client_secret
         self._joining = False
-        self.setup_twitch()
+        self.setup_twitch(eventsub, callback_url, port)
         self.irc_server = 'irc.chat.twitch.tv'
         self.irc_port = 6667
         self.channel_handlers = None
@@ -71,11 +84,20 @@ class retroBot(irc.bot.SingleServerIRCBot):
             else:
                 self.channel_handlers[e.target[1:]].on_pubmsg(c, e)
     
-    def setup_twitch(self):
+    def setup_twitch(self, eventsub=False, callback_url=None, port=None):
         self.logger.info(f'Setting up Twitch API client...')
         self.twitch = Twitch(self.client_id, self.client_secret)
         self.twitch.authenticate_app([])
         self.user_auth = userAuth(self.twitch, self.username, refresh_callback=self.oauth_user_refresh)
+        if eventsub:
+            if not callback_url or not port:
+                raise Exception('callback_url and port must be specified when using EventSub!')
+            self.eventsub = EventSub(callback_url, self.client_id, port, self.twitch)
+            self.eventsub.unsubscribe_all()
+            self.eventsub.start()
+            self.logger.info(f'EventSub initiated!')
+        else:
+            self.eventsub = None
         self.logger.info(f'Twitch API client set up!')
     
     def oauth_user_refresh(self, token, refresh_token):
