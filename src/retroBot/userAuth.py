@@ -1,6 +1,6 @@
 from twitchAPI.helper import build_url, build_scope, TWITCH_AUTH_BASE_URL, get_uuid
 from time import sleep
-from twitchAPI.oauth import UserAuthenticator
+from twitchAPI.oauth import UserAuthenticator, refresh_access_token
 from twitchAPI.types import AuthScope
 from threading import Thread
 from appdirs import user_data_dir
@@ -17,7 +17,7 @@ class userAuth:
         self.logger = logging.getLogger(f'retroBot.{username}.userAuth')
         self.username = username
         self.twitch = twitch
-        self.twitch.user_auth_refresh_callback = self.oauth_user_refresh
+        self.twitch.user_auth_refresh_callback = self.oauth_user_refresh_callback
         self.scope = scope
         self.refresh_callback = refresh_callback
         self.get_oauth_token()
@@ -29,18 +29,17 @@ class userAuth:
         while True:
             sleep(interval)
             try:
-                self.twitch.refresh_used_token()
+                self.oauth_user_refresh()
             except Exception as e:
                 self.logger.error(e)
 
     def authenticate_twitch(self):
         try:
-            cli = webbrowser.get().name == 'www-browser'
-            if cli:
+            if webbrowser.get().name == 'www-browser':
                 self.token, self.refresh_token = authenticate_cli(self.twitch, self.scope)
             else:
-                auth = UserAuthenticator(self.twitch, self.scope, force_verify=False)
-                self.token, self.refresh_token = auth.authenticate()
+                self.auth = UserAuthenticator(self.twitch, self.scope, force_verify=False)
+                self.token, self.refresh_token = self.auth.authenticate()
         except Exception as e:
             self.logger.error(e)
             self.token, self.refresh_token = authenticate_cli(self.twitch, self.scope)
@@ -61,6 +60,7 @@ class userAuth:
             self.twitch.set_user_authentication(self.token, self.scope, self.refresh_token)
 
     def save_oauth_token(self):
+        self.logger.debug(f'Saving OAuth Token...')
         pickle_file = self.get_oauth_file()
         with open(pickle_file, 'wb') as f:
             pickle.dump((self.token, self.refresh_token), f)
@@ -73,23 +73,29 @@ class userAuth:
                 out = pickle.load(f)
             self.logger.debug(f'OAuth Token has been loaded')
             return out
-        else: return None
+        else:
+            return None
 
     def get_oauth_file(self):
         pickle_dir = user_data_dir('retroBot', 'retrontology')
         if not os.path.exists(pickle_dir): os.makedirs(pickle_dir, exist_ok=True)
         return os.path.join(pickle_dir, f'{self.username}_oauth.pickle')
+
+    def oauth_user_refresh(self, refresh_token=None):
+        if refresh_token == None:
+            refresh_token = self.refresh_token
+        self.token, self.refresh_token = refresh_access_token(refresh_token, self.twitch.app_id, self.twitch.app_secret)
+        self.twitch.set_user_authentication(self.token, self.scope, self.refresh_token)
+        self.oauth_user_refresh_callback()
     
-    def oauth_user_refresh(self, token=None, refresh_token=None):
+    def oauth_user_refresh_callback(self, token=None, refresh_token=None):
         if token == None:
             token = self.token
         if refresh_token == None:
             refresh_token = self.refresh_token
-        self.logger.debug(f'Refreshing OAuth Token')
         self.token = token
         self.refresh_token = refresh_token
         self.save_oauth_token()
-        self.logger.debug(f'Oauth Token is refreshed!')
         if self.refresh_callback:
             self.refresh_callback(token, refresh_token)
 
