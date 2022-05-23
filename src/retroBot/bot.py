@@ -32,6 +32,9 @@ class retroBot(irc.bot.SingleServerIRCBot):
         self.logger = logging.getLogger(f"retroBot.{username}")
         self.client_id = client_id
         self.client_secret = client_secret
+        self.ffz = ffz
+        self.bttv = bttv
+        self.seventv = seventv
         self._joining = False
         self.setup_twitch(eventsub, callback_url, port)
         self.irc_server = 'irc.chat.twitch.tv'
