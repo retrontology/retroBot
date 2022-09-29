@@ -65,10 +65,9 @@ class retroBot(irc.bot.SingleServerIRCBot):
             self.logger.info(f'privnotice event: {event}')
     
     def join_channel(self, channel):
-        channel = channel.lower()
+        channel = f'#{channel.lower()}'
         while not channel in self.channels:
-            self.logger.debug(f'CHANNELS: {self.channels}')
-            self.connection.join('#' + channel)
+            self.connection.join(channel)
             sleep(1)
 
     def join_channels(self):
