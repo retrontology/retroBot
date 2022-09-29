@@ -67,7 +67,8 @@ class retroBot(irc.bot.SingleServerIRCBot):
     def join_channel(self, channel):
         channel = channel.lower()
         while not channel in self.channels:
-            self.connection.join('#' + channel.lower())
+            self.logger.debug(f'CHANNELS: {self.channels}')
+            self.connection.join('#' + channel)
             sleep(1)
 
     def join_channels(self):
