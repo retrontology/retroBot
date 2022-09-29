@@ -63,12 +63,18 @@ class retroBot(irc.bot.SingleServerIRCBot):
             self.user_auth.oauth_user_refresh()
         else:
             self.logger.info(f'privnotice event: {event}')
+    
+    def join_channel(self, channel):
+        channel = channel.lower()
+        while not channel in self.channels:
+            self.connection.join('#' + channel.lower())
+            sleep(1)
 
     def join_channels(self):
         self._joining = True
         count = 0
         for channel in self.channel_handlers.copy():
-            self.connection.join('#' + channel.lower())
+            self.join_channel(channel)
             if count >= 19:
                 sleep(10.1)
                 count = 0
