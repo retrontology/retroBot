@@ -67,7 +67,7 @@ class retroBot(irc.bot.SingleServerIRCBot):
     def join_channels(self):
         self._joining = True
         count = 0
-        for channel in self.channel_handlers:
+        for channel in self.channel_handlers.copy():
             self.connection.join('#' + channel.lower())
             if count >= 19:
                 sleep(10.1)
