@@ -22,5 +22,6 @@ setuptools.setup(
     ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
+    install_requires=['twitchAPI', 'PyYAML', 'irc', 'appdirs', 'requests'],
     python_requires=">=3.6",
 )
