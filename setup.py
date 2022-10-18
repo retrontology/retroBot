@@ -17,10 +17,10 @@ setuptools.setup(
     },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GNU GPL-3.0 License",
         "Operating System :: OS Independent",
     ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
+    install_requires=['twitchAPI', 'PyYAML', 'irc', 'appdirs', 'requests'],
     python_requires=">=3.6",
 )
