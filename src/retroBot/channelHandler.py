@@ -8,9 +8,9 @@ class channelHandler():
     def __init__(self, channel, parent, ffz=False, bttv=False, seventv=False):
         self.logger = logging.getLogger(f'retroBot.{parent.username}.{channel}')
         self.logger.info(f'Initializing Channel Handler for {channel}')
+        self.parent = parent
         self.channel = channel
         self.channel_id = self.get_channel_id()
-        self.parent = parent
         self.init_emote_parsers(ffz, bttv, seventv)
         self.webhook_uuid = None
         self.logger.info('Channel handler set up!')
