@@ -7,12 +7,21 @@ class config(dict):
     
     def load(self, filename):
         self.filename = filename
-        self.clear()
-        with open(self.filename, 'r') as stream:
+        with open(filename, 'r') as stream:
             try:
-                self.update(yaml.safe_load(stream).copy())
+                data = yaml.safe_load(stream)
             except yaml.YAMLError as e:
                 print(e)
+                return
+        # safe_load returns None for an empty file, and the existing contents
+        # are only discarded once the new ones have parsed cleanly.
+        if data is None:
+            data = {}
+        if not isinstance(data, dict):
+            raise TypeError(f'{filename} must contain a YAML mapping, got {type(data).__name__}')
+        self.filename = filename
+        self.clear()
+        self.update(data)
     
     def save(self):
         with open(self.filename, 'w') as stream:

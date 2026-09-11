@@ -1,0 +1,74 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build distributions
+    runs-on: ubuntu-latest
+    steps:
+      # The examples/ submodules are not part of the package, so skip them.
+      - name: Check out the release
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+
+      - name: Install build tooling
+        run: python -m pip install --upgrade build twine
+
+      - name: Build the sdist and wheel
+        run: python -m build
+
+      - name: Check the package metadata
+        run: twine check dist/*
+
+      # The version lives in setup.py, so a release tag can disagree with what
+      # actually got built. Publishing that mismatch would burn the version
+      # number on PyPI, which cannot be reused.
+      - name: Check the built version against the release tag
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          wheel="$(ls dist/*.whl)"
+          version="$(basename "$wheel" | cut -d- -f2)"
+          tag="${TAG#v}"
+          if [ "$version" != "$tag" ]; then
+            echo "::error::setup.py built $version but the release is tagged $TAG. Bump the version in setup.py, or retag the release."
+            exit 1
+          fi
+          echo "Publishing $version for release $TAG"
+
+      - name: Upload the distributions
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    # Trusted publishing: id-token is scoped to this job alone, so the job that
+    # builds the package never holds a credential.
+    environment: release
+    permissions:
+      id-token: write
+    steps:
+      - name: Download the distributions
+        uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

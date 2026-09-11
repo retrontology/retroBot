@@ -7,15 +7,31 @@ class message():
         self.parse_msg_event(event, emote_parsers)
    
     def parse_msg_event(self, event, emote_parsers={}):
-        self.content = event.arguments[0]
+        self.content = event.arguments[0] if event.arguments else ''
+        self.username = None
+        self.user_id = None
+        self.time = None
+        self.badge_info = None
+        self.sub_length = None
+        self.prediction = None
+        self.badges = None
+        self.broadcaster = False
         self.client_nonce = None
+        self.color = None
+        self.emotes = None
+        self.flags = None
+        self.id = None
+        self.mod = False
+        self.room_id = None
+        self.sub = False
+        self.turbo = False
         for tag in event.tags:
             if tag['key'] == 'display-name':
                 self.username = tag['value']
             elif tag['key'] == 'user-id':
                 self.user_id = int(tag['value'])
             elif tag['key'] == 'tmi-sent-ts':
-                self.time = pytz.utc.localize(datetime.datetime.fromtimestamp(float(tag['value'])/1000))
+                self.time = datetime.datetime.fromtimestamp(float(tag['value'])/1000, tz=pytz.utc)
             elif tag['key'] == 'badge-info':
                 self.badge_info = self.parse_badge_info(tag['value'])
                 if self.badge_info != None:
@@ -34,8 +50,6 @@ class message():
                 self.badges = self.parse_badges(tag['value'])
                 if self.badges != None:
                     self.broadcaster = 'broadcaster/1' in self.badges
-                else:
-                    self.broadcaster = None
             elif tag['key'] == 'client-nonce':
                 self.client_nonce = tag['value']
             elif tag['key'] == 'color':

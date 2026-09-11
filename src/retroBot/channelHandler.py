@@ -11,8 +11,12 @@ class channelHandler():
         self.parent = parent
         self.channel = channel
         self.channel_id = self.get_channel_id()
+        # Twitch's channel id and user id are the same value; get_live and the
+        # webhook methods read user_id, which nothing used to assign.
+        self.user_id = self.channel_id
         self.init_emote_parsers(ffz, bttv, seventv)
         self.webhook_uuid = None
+        self.live = None
         self.logger.info('Channel handler set up!')
     
     def init_emote_parsers(self, ffz=False, bttv=False, seventv=False):
@@ -25,7 +29,10 @@ class channelHandler():
             self.emote_parsers['seventv'] = seventvEmoteParser(self.channel)
     
     def get_channel_id(self):
-        return self.parent.twitch.get_users(logins=[self.channel])['data'][0]['id']
+        users = self.parent.twitch.get_users(logins=[self.channel])['data']
+        if not users:
+            raise ValueError(f'No such Twitch user: {self.channel}')
+        return users[0]['id']
     
     def on_pubmsg(self, c, e):
         msg = message(e, self.emote_parsers)
@@ -42,7 +49,7 @@ class channelHandler():
         cmd = msg.content.split(' ')[0][1:].lower()
     
     def get_user_id(self):
-        return self.parent.twitch.get_users(logins=[self.channel.lower()])['data'][0]['id']
+        return self.get_channel_id()
 
     def get_live(self):
         data = self.parent.twitch.get_streams(user_id=self.user_id)
@@ -56,10 +63,20 @@ class channelHandler():
             self.live = False
         return self.live
 
+    def _get_webhook(self):
+        webhook = getattr(self.parent, 'webhook', None)
+        if webhook is None:
+            raise RuntimeError(
+                'The bot has no webhook client. twitchAPI 2.5.3 dropped TwitchWebHook '
+                'in favour of EventSub, so these methods need porting to '
+                'eventsub.listen_stream_online/listen_stream_offline.'
+            )
+        return webhook
+
     def webhook_stream_changed_subscribe(self, callback=None):
         if callback == None:
             callback = self.callback_stream_changed
-        success, uuid = self.parent.webhook.subscribe_stream_changed(self.user_id, callback)
+        success, uuid = self._get_webhook().subscribe_stream_changed(self.user_id, callback)
         if success:
             self.webhook_uuid = uuid
             self.logger.info(f'Subscribed to webhook for {self.channel}')
@@ -69,9 +86,9 @@ class channelHandler():
 
     def webhook_stream_changed_unsubscribe(self):
         if self.webhook_uuid:
-            success = self.parent.webhook.unsubscribe(self.webhook_uuid)
+            success = self._get_webhook().unsubscribe(self.webhook_uuid)
             if success:
-                self.webhook_uuid = ''
+                self.webhook_uuid = None
                 self.logger.info(f'Unsubscribed from webhook for {self.channel}')
             return success
     
@@ -89,7 +106,7 @@ class channelHandler():
         else:
             self.live = False
             self.logger.info(f'{self.channel} has gone offline')
-            Thread(target=self.callback_stream_gone_live, args=(uuid, data), daemon=True).start()
+            Thread(target=self.callback_stream_gone_offline, args=(uuid, data), daemon=True).start()
     
     def callback_stream_gone_live(self, uuid, data):
         pass
