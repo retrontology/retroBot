@@ -52,7 +52,6 @@ class retroBot(irc.bot.SingleServerIRCBot):
 
     def on_welcome(self, c, e):
         self.logger.info('Joined Twitch IRC server!')
-        c.cap('REQ', ':twitch.tv/membership')
         c.cap('REQ', ':twitch.tv/tags')
         c.cap('REQ', ':twitch.tv/commands')
         if self.channel_handlers and not self._joining:
@@ -83,7 +82,8 @@ class retroBot(irc.bot.SingleServerIRCBot):
         self._joining = False
 
     def on_join(self, c, e):
-        self.logger.debug(f'Joined {e.target}!')
+        if e.source.nick == c.get_nickname():
+            self.logger.debug(f'Joined {e.target}!')
 
     def on_pubmsg(self, c, e):
         self.logger.debug(f'Passing message to {e.target[1:]} handler')

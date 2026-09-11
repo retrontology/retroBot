@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="retroBot",
-    version="0.3.4",
+    version="0.3.5",
     author="retrontology",
     author_email="retrontology@hotmail.com",
     description="A Twitch IRC bot integrating twitchAPI and irc",
